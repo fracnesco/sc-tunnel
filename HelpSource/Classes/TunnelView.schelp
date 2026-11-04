@@ -1,0 +1,22 @@
+TITLE:: TunnelView
+summary:: Tunnel's display
+categories:: Libraries>Tunnel
+related:: Classes/Tunnel, Classes/FxParamView, Classes/FxParamPanel
+
+DESCRIPTION::
+What link::Classes/FxParamPanel:: puts at the top of Tunnel's window. In it, drag the echoes along for the time, above the line the left and below it the right, and away from the middle for the feedback; drag the band along for its frequency, up and down for its width.
+
+It draws from the object's settings and the replies its meters bring, so it is only live while the window is running; link::Classes/FxParamView:: has the rest.
+
+CLASSMETHODS::
+
+METHOD:: new
+ARGUMENT:: unit
+The link::Classes/Tunnel::.
+ARGUMENT:: parent
+A view to go in.
+
+INSTANCEMETHODS::
+
+METHOD:: hint
+What the hint bar says over it.

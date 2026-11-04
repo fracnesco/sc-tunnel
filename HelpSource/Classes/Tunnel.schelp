@@ -1,0 +1,109 @@
+TITLE:: Tunnel
+summary:: a stereo delay with a band filter in the loop, modulation, ducking, tape character and a small reverb, as a UGen and as an object, with a window
+categories:: Libraries>Tunnel
+related:: Classes/FxParamUnit, Classes/TunnelView, Classes/FxUnit, Classes/FxChain
+
+DESCRIPTION::
+A stereo delay with a character section - time or tempo, a band filter in the loop, modulation, gate, ducking, tape noise and wobble, and a reverb before, after or inside it - in the spirit of Ableton's Echo, running anywhere a UGen does, with a window.
+
+code::
+Ndef(\keys, { Tunnel.ar(Blip.ar([220, 221], 8) * Decay2.kr(Impulse.kr(1), 0.01, 0.2) * 0.3, \tunnel) }).play;
+
+t = Tunnel(Ndef(\keys), \tunnel);
+t.gui;
+t.preset = 'worn tape';
+t.sync = true; t.bpm = 128; t.divL = '1/8d'; t.divR = '1/4';
+t.feedback = 0.7; t.cross = 1;      // ping pong
+::
+
+Two lines, left and right, up to 4 seconds each. Free, they read code::timeL:: and code::timeR::. With code::sync:: on, they read a division of code::bpm::; nothing here follows a clock of its own, so you say the tempo. code::link:: makes the right follow the left, and code::offset:: moves it a little early or late. code::lineTime:: gives you the time in seconds, and the display draws from that.
+
+Feedback goes through a band filter, a high pass and a low pass moved together by code::filterFreq:: and code::filterWidth::. It is saturated on the way back in, so past 100% it swells and holds rather than running away. code::cross:: sends each side's feedback to the other: at 100% it is a ping pong.
+
+Changing the time does one of two things. With code::repitch::, the read head glides and the echoes bend, as on a tape machine. Without it, two read heads crossfade, and the echoes already in the line stay at their pitch.
+
+The lfo, or the input's envelope by way of code::envMix::, moves the time and the filter. code::gateThr:: keeps quiet input out of the lines, code::duckThr:: makes the echoes get out of the way of the input, code::noise:: puts hiss in the loop and code::wobble:: makes the tape unsteady. code::reverb:: can sit before the lines, after them, or inside the feedback.
+
+Hiss in the loop never goes silent, so in a SuperDirt insert an orbit with code::noise:: above 0 does not sleep.
+
+subsection:: The object and the UGen
+It is an link::Classes/FxParamUnit::, so everything that class documents works here: code::Tunnel.ar(in, name)::, code::Tunnel(node, name)::, code::Tunnel.onBus(bus, numChannels)::, presets, the clipboard, code::gui::. Its window's display is a link::Classes/TunnelView::.
+
+subsection:: Parameters
+Each is a property of the object: read it, set it. The numbers are in the order of the node's control, which is what saved node maps carry. Internal ones without a knob, if any, are described above.
+
+table::
+## strong::parameter:: || strong::range:: || strong::default:: || strong::what it does::
+## code::sync:: || on / off || false || in time with bpm, by division - unticked, in milliseconds
+## code::timeL:: || 0.001 .. 4 s || 0.375 || the left line's time
+## code::timeR:: || 0.001 .. 4 s || 0.5 || the right line's time
+## code::divL:: || 1/32 1/16t 1/16 1/16d 1/8t 1/8 1/8d 1/4t 1/4 1/4d 1/2 1/2d 1/1 || 1/8d || the left line's division, when in sync
+## code::divR:: || 1/32 1/16t 1/16 1/16d 1/8t 1/8 1/8d 1/4t 1/4 1/4d 1/2 1/2d 1/1 || 1/4 || the right line's division, when in sync
+## code::link:: || on / off || false || the right line follows the left
+## code::offset:: || -0.33 .. 0.33 || 0 || the right line a little early or late: a swing between the sides
+## code::bpm:: || 20 .. 300 bpm || 120 || the tempo the divisions are counted in
+## code::input:: || -36 .. 12 dB || 0 || the level into the lines
+## code::feedback:: || 0 .. 1.2 || 0.5 || how much goes round again - saturated, so past 1 it swells and holds
+## code::cross:: || 0 .. 1 || 0 || how much of each side's feedback goes to the other: ping pong
+## code::invert:: || on / off || false || turn the feedback's polarity over: hollow, at short times
+## code::filterOn:: || on / off || true || the band filter in the loop and on what comes out
+## code::filterFreq:: || 40 .. 16000 Hz || 1600 || the middle of the band
+## code::filterWidth:: || 0.2 .. 9 oct || 5 || how wide the band is, in octaves
+## code::lfoShape:: || sine triangle sawUp sawDown square sampleHold noise || sine || the lfo's shape
+## code::lfoRate:: || 0.01 .. 20 Hz || 0.5 || the lfo's speed
+## code::lfoPhase:: || 0 .. 1 || 0.25 || how far apart the sides' lfos are: 0.5 is opposite
+## code::modTime:: || 0 .. 1 || 0 || how much the lfo moves the delay time
+## code::modFilter:: || 0 .. 1 || 0 || how much the lfo moves the filter
+## code::envMix:: || 0 .. 1 || 0 || lfo or envelope: at 100 the input's level does the moving
+## code::gateThr:: || -96 .. 0 dB || -96 || what falls under this does not go in
+## code::gateRel:: || 0.005 .. 2 s || 0.2 || how quickly the gate closes
+## code::duckThr:: || -60 .. 0 dB || 0 || the echoes get out of the way while the input is over this
+## code::duckRel:: || 0.01 .. 2 s || 0.25 || how quickly they come back
+## code::noise:: || 0 .. 1 || 0 || hiss in the loop
+## code::noiseMorph:: || 0 .. 1 || 0.5 || the hiss from dark to bright
+## code::wobble:: || 0 .. 1 || 0 || a slow unsteady tape speed
+## code::wobbleMorph:: || 0 .. 1 || 0.3 || the wobble from slow drift to fast flutter
+## code::repitch:: || on / off || false || a change of time bends the echoes, like a tape; unticked they crossfade
+## code::reverb:: || 0 .. 1 || 0 || how much of the small reverb
+## code::reverbDecay:: || 0 .. 1 || 0.6 || how big it is
+## code::reverbPos:: || pre post loop || post || the reverb before the lines, after them, or inside the feedback
+## code::width:: || 0 .. 2 || 1 || how far apart the echoes sit: 0 is mono
+## code::mix:: || 0 .. 1 || 0.35 || how much of the effect goes out, against the dry signal
+## code::output:: || -36 .. 24 dB || 0 || the level of the whole thing, in dB
+::
+
+CLASSMETHODS::
+
+METHOD:: divisionNames
+the divisions by name.
+
+METHOD:: divisionBeats
+how many beats each lasts.
+
+INSTANCEMETHODS::
+
+METHOD:: lineTime
+a line's time in seconds as the settings have it, before any lfo: side 0 is the left, 1 the right.
+ARGUMENT:: side
+
+METHOD:: hiPass
+the bottom of the band, in Hz.
+
+METHOD:: loPass
+the top of the band, in Hz.
+
+METHOD:: filterMag
+the band's gain at some frequencies, as a ratio, from the same biquad arithmetic the server runs.
+ARGUMENT:: freqs
+ARGUMENT:: sr
+
+EXAMPLES::
+
+code::
+s.boot;
+Ndef(\keys, { Tunnel.ar(Blip.ar([220, 221], 8) * Decay2.kr(Impulse.kr(1), 0.01, 0.2) * 0.3, \tunnel) }).play;
+t = Tunnel(Ndef(\keys), \tunnel);
+t.gui;
+t.preset = Tunnel.presetNames.choose;
+t.free; Ndef(\keys).clear;
+::
