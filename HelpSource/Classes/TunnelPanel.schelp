@@ -1,0 +1,36 @@
+TITLE:: TunnelPanel
+summary:: Tunnel's device panel, with a hand from the display to the knobs
+categories:: Libraries>Tunnel
+related:: Classes/Tunnel, Classes/TunnelView, Classes/FxDevicePanel, Classes/FxDeviceGUI
+
+DESCRIPTION::
+The link::Classes/FxDevicePanel:: every effect of the family has - header, display with the in and out meters, pages of cards, the output card, the hint bar - built from Tunnel's table and code::*devicePages::, plus what ties its display to its knobs: the link::Classes/TunnelView:: is given the panel, so hovering the echoes lights the knobs that place them, the gate and duck knobs show the input against their thresholds, and a drag in the display speaks in the hint bar; the knobs of what the display draws light their part of it while hovered.
+
+It is code::Tunnel.panelClass::, so code::gui:: and code::panel:: both make one; everything else is link::Classes/FxDevicePanel::'s.
+
+code::
+t = Tunnel.new;
+t.gui;                  // in its own window (FxDeviceGUI)
+
+(
+w = Window("tunnel", Rect(100, 100, 960, 560));
+p = t.panel(w);         // or in yours
+w.layout = VLayout(p.view);
+p.running = true;
+w.onClose = { p.remove };
+w.front;
+);
+::
+
+CLASSMETHODS::
+
+METHOD:: new
+ARGUMENT:: unit
+The link::Classes/Tunnel::.
+ARGUMENT:: parent
+A view to go in.
+
+INSTANCEMETHODS::
+
+METHOD:: hints
+The hint bar: setting it also attaches the knobs that light their part of the display.

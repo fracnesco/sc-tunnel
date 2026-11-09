@@ -65,15 +65,42 @@ Each instance takes 1.5 MB of the server's real time memory at stereo. A stock s
 
 ## The window
 
-`t.gui` opens the top row (on, presets, save, copy, paste), the display, and a row of knobs per section. Hover over anything and the bar at the bottom says what it does.
+`t.gui` opens a device: the top row (on, presets, save, `...` for the rest), the display with the in and out meters at its right, four pages of controls under it - echo, modulation, character, space - and the output card, mix and output, at the right of every page. Hover over anything and the bar at the bottom says what it does. The echoes and the knobs that place them wear the delay family's teal.
 
-In the display, drag the echoes along for the time, above the line the left and below it the right, and away from the middle for the feedback; drag the band along for its frequency, up and down for its width.
+The display has two parts.
+
+- **echoes**: one hit and everything it leaves, a bar per echo at the time it arrives and as loud as the settings make it, in dB against the hit. The left line is above the middle, the right below, so a ping pong reads as bars changing sides. Along the bottom, milliseconds or seconds; in sync, beats, with the sixteenths ticked along the middle. The dashed line is how fast the loop lets them die, and the caption says how many you hear. While it runs, the bars move with the lfo, sink by what the duck takes, and behind them the echoes' measured level runs along from the last hit.
+- **loop filter**: the band every echo goes through again, and what is left of the 2nd, 4th and 8th echo after it, the output's spectrum behind.
+
+What you can do in it:
+
+| where | gesture | what it does |
+|---|---|---|
+| echoes | drag one along | its line's time (in sync, from division to division; with link, both lines) |
+| echoes | drag away from the middle | more feedback; towards it, less |
+| echoes | the wheel | ping pong |
+| echoes | double click | feedback back to 50 % |
+| loop filter | drag the band | along for its middle, up for wider |
+| loop filter | drag an edge | that edge alone |
+| loop filter | the wheel | its width |
+| loop filter | double click | back to 1.60 kHz, 5 oct |
+
+Shift makes any drag fine. Hovering a part lights the knobs it plays, and a hovered knob lights its part.
+
+The pages:
+
+- **echo**: time (sync, left, link, right, swing, bpm, tap), feedback (feedback, ping pong, invert), loop filter (on, freq, width). With `sync` on, each line's knob turns into a stepped knob over the divisions; with `link`, the right one dims. **tap** the beat two times or more: that is the bpm, and free, the left time too, the right keeping its ratio.
+- **modulation**: the lfo (shape, rate, lfo sync, phase, env mix) and what it moves (time, filter).
+- **character**: input (input, gate, gate rel), duck, tape (hiss, hiss tone, wobble, flutter, repitch). The gate and duck knobs show where the input is against them while it runs.
+- **space**: the small reverb (reverb, decay, where, stereo).
+
+A control that does nothing as things are set is dimmed: bpm when free, the lfo when it moves nothing, gate rel with the gate off.
 
 ## Presets
 
 Built in: default, slap, ping pong, dotted, worn tape, dub siren, ducked, into the fog, gated, chorus cave.
 
-Yours go in `Platform.userAppSupportDir/tunnel-presets.scd`: `t.saveAsPreset("mine")`, or type a name in the window and press save. `t.copySettings` and `other.pasteSettings` carry settings from one to another.
+Yours go in `Platform.userAppSupportDir/tunnel-presets.scd`: `t.saveAsPreset("mine")`, or press save in the window and give it a name. `t.copySettings` and `other.pasteSettings` carry settings from one to another.
 
 ## Parameters
 
@@ -81,51 +108,53 @@ Every parameter is a property: `t.sync`, `t.sync = ...`. These also work by name
 
 | parameter | section | range | default | what it does |
 |---|---|---|---|---|
-| `sync` | time | on / off | false | in time with bpm, by division - unticked, in milliseconds |
-| `timeL` | time | 0.001 .. 4 s | 0.375 | the left line's time |
-| `timeR` | time | 0.001 .. 4 s | 0.5 | the right line's time |
-| `divL` | time | 1/32 1/16t 1/16 1/16d 1/8t 1/8 1/8d 1/4t 1/4 1/4d 1/2 1/2d 1/1 | 1/8d | the left line's division, when in sync |
-| `divR` | time | 1/32 1/16t 1/16 1/16d 1/8t 1/8 1/8d 1/4t 1/4 1/4d 1/2 1/2d 1/1 | 1/4 | the right line's division, when in sync |
-| `link` | time | on / off | false | the right line follows the left |
-| `offset` | time | -0.33 .. 0.33 | 0 | the right line a little early or late: a swing between the sides |
-| `bpm` | time | 20 .. 300 bpm | 120 | the tempo the divisions are counted in |
-| `input` | time | -36 .. 12 dB | 0 | the level into the lines |
-| `feedback` | time | 0 .. 1.2 | 0.5 | how much goes round again - saturated, so past 1 it swells and holds |
-| `cross` | time | 0 .. 1 | 0 | how much of each side's feedback goes to the other: ping pong |
-| `invert` | time | on / off | false | turn the feedback's polarity over: hollow, at short times |
-| `filterOn` | filter | on / off | true | the band filter in the loop and on what comes out |
-| `filterFreq` | filter | 40 .. 16000 Hz | 1600 | the middle of the band |
-| `filterWidth` | filter | 0.2 .. 9 oct | 5 | how wide the band is, in octaves |
-| `lfoShape` | filter | sine triangle sawUp sawDown square sampleHold noise | sine | the lfo's shape |
-| `lfoRate` | filter | 0.01 .. 20 Hz | 0.5 | the lfo's speed |
-| `lfoPhase` | filter | 0 .. 1 | 0.25 | how far apart the sides' lfos are: 0.5 is opposite |
-| `modTime` | filter | 0 .. 1 | 0 | how much the lfo moves the delay time |
-| `modFilter` | filter | 0 .. 1 | 0 | how much the lfo moves the filter |
-| `envMix` | filter | 0 .. 1 | 0 | lfo or envelope: at 100 the input's level does the moving |
-| `gateThr` | character | -96 .. 0 dB | -96 | what falls under this does not go in |
-| `gateRel` | character | 0.005 .. 2 s | 0.2 | how quickly the gate closes |
-| `duckThr` | character | -60 .. 0 dB | 0 | the echoes get out of the way while the input is over this |
-| `duckRel` | character | 0.01 .. 2 s | 0.25 | how quickly they come back |
-| `noise` | character | 0 .. 1 | 0 | hiss in the loop |
-| `noiseMorph` | character | 0 .. 1 | 0.5 | the hiss from dark to bright |
-| `wobble` | character | 0 .. 1 | 0 | a slow unsteady tape speed |
-| `wobbleMorph` | character | 0 .. 1 | 0.3 | the wobble from slow drift to fast flutter |
-| `repitch` | character | on / off | false | a change of time bends the echoes, like a tape; unticked they crossfade |
+| `sync` | time | on off | false | in time with the bpm, by division - off, in milliseconds |
+| `timeL` | time | 0.001 .. 4 s | 0.375 | the left line's time - or drag its echoes along in the display |
+| `timeR` | time | 0.001 .. 4 s | 0.5 | the right line's time - or drag its echoes along in the display |
+| `divL` | time | 1/32 1/16t 1/16 1/16d 1/8t 1/8 1/8d 1/4t 1/4 1/4d 1/2 1/2d 1/1 | 1/8d | the left line's time in sync: a division of the bpm, t for triplet, d for dotted - or drag its echoes along |
+| `divR` | time | 1/32 1/16t 1/16 1/16d 1/8t 1/8 1/8d 1/4t 1/4 1/4d 1/2 1/2d 1/1 | 1/4 | the right line's time in sync: a division of the bpm, t for triplet, d for dotted - or drag its echoes along |
+| `link` | time | on off | false | the right line follows the left - swing still moves it |
+| `offset` | time | -0.33 .. 0.33 | 0 | the right line a little early or late against the left |
+| `bpm` | time | 20 .. 300 bpm | 120 | the tempo the divisions are counted in - type it, or tap it |
+| `input` | input | -36 .. 12 dB | 0 | the level into the lines: louder echoes, and past 0 dB they saturate |
+| `feedback` | feedback | 0 .. 1.2 | 0.5 | how much goes round again - saturated, so past 100 it swells and holds; or drag the echoes away from the middle |
+| `cross` | feedback | 0 .. 1 | 0 | how much of each side's feedback goes to the other: at 100 the echoes swap sides every time - or the wheel on the echoes |
+| `invert` | feedback | on off | false | turn the feedback's polarity over: hollow, at short times |
+| `filterOn` | loop filter | on off | true | the band filter in the loop: every echo goes through it once more, so they darken as they go |
+| `filterFreq` | loop filter | 40 .. 16000 Hz | 1600 | the middle of the band - or drag the band along in the display |
+| `filterWidth` | loop filter | 0.2 .. 9 oct | 5 | how wide the band is, in octaves - or the wheel on the band |
+| `lfoShape` | lfo | sine triangle sawUp sawDown square sampleHold noise | sine | the lfo's shape |
+| `lfoRate` | lfo | 0.01 .. 20 Hz | 0.5 | the lfo's speed, when it runs free |
+| `lfoPhase` | lfo | 0 .. 1 | 0.25 | how far apart the two sides' lfos are: 50 is opposite |
+| `modTime` | lfo moves | 0 .. 1 | 0 | how much the lfo moves the delay time, up to half of it each way: a chorus at short times, a warble at long ones |
+| `modFilter` | lfo moves | 0 .. 1 | 0 | how much the lfo moves the band, up to two octaves each way |
+| `envMix` | lfo | 0 .. 1 | 0 | lfo or envelope: at 100 the input's level does the moving |
+| `gateThr` | input | -96 .. 0 dB | -96 | what falls under this does not go into the lines |
+| `gateRel` | input | 0.005 .. 2 s | 0.2 | how quickly the gate closes |
+| `duckThr` | duck | -60 .. 0 dB | 0 | the echoes get out of the way while the input is over this - at 0 dB they never do |
+| `duckRel` | duck | 0.01 .. 2 s | 0.25 | how quickly they come back |
+| `noise` | tape | 0 .. 1 | 0 | tape hiss in the loop - it never goes quiet |
+| `noiseMorph` | tape | 0 .. 1 | 0.5 | the hiss from dark to bright |
+| `wobble` | tape | 0 .. 1 | 0 | an unsteady tape speed |
+| `wobbleMorph` | tape | 0 .. 1 | 0.3 | the wobble from a slow drift to a fast flutter |
+| `repitch` | tape | on off | false | a change of time bends the echoes, like a tape; off, they crossfade |
 | `reverb` | space | 0 .. 1 | 0 | how much of the small reverb |
 | `reverbDecay` | space | 0 .. 1 | 0.6 | how big it is |
-| `reverbPos` | space | pre post loop | post | the reverb before the lines, after them, or inside the feedback |
-| `width` | space | 0 .. 2 | 1 | how far apart the echoes sit: 0 is mono |
-| `mix` | space | 0 .. 1 | 0.35 | how much of the effect goes out, against the dry signal |
-| `output` | space | -36 .. 24 dB | 0 | the level of the whole thing, in dB |
+| `reverbPos` | space | pre post loop | post | the reverb before the lines, after them, or inside the feedback, where it builds |
+| `width` | space | 0 .. 2 | 1 | how far apart the echoes sit: 0 is mono, past 100 wider than they came in |
+| `mix` | output | 0 .. 1 | 0.35 | how much of the effect goes out, against the dry signal |
+| `output` | output | -36 .. 24 dB | 0 | the level of the whole thing, in dB |
+| `lfoSync` | lfo | free four two one half quarter eighth sixteenth third sixth twelfth | free | the lfo free, at its rate - or one period every so many cycles of Tidal's clock |
 
 ## Files
 
 | file | what it is |
 |---|---|
 | [classes/Tunnel.sc](classes/Tunnel.sc) | the parameters, the presets, the DSP |
-| [classes/TunnelView.sc](classes/TunnelView.sc) | the window's display |
+| [classes/TunnelView.sc](classes/TunnelView.sc) | the window's display (TunnelView) and its panel (TunnelPanel) |
 | [HelpSource/Classes/Tunnel.schelp](HelpSource/Classes/Tunnel.schelp) | the help file |
 | [HelpSource/Classes/TunnelView.schelp](HelpSource/Classes/TunnelView.schelp) | the help file for the display |
+| [HelpSource/Classes/TunnelPanel.schelp](HelpSource/Classes/TunnelPanel.schelp) | the help file for the panel |
 | [examples/tunnel-demo.scd](examples/tunnel-demo.scd) | a walkthrough, one block at a time |
 | [install.scd](install.scd) | the symlink, a check, an uninstall |
 | [sc-tunnel.quark](sc-tunnel.quark) | the quark manifest |

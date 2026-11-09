@@ -1,12 +1,30 @@
 TITLE:: TunnelView
-summary:: Tunnel's display
+summary:: Tunnel's display: the echoes in time, and the band they go through
 categories:: Libraries>Tunnel
-related:: Classes/Tunnel, Classes/FxParamView, Classes/FxParamPanel
+related:: Classes/Tunnel, Classes/TunnelPanel, Classes/FxParamView, Classes/FxDevicePanel
 
 DESCRIPTION::
-What link::Classes/FxParamPanel:: puts at the top of Tunnel's window. In it, drag the echoes along for the time, above the line the left and below it the right, and away from the middle for the feedback; drag the band along for its frequency, up and down for its width.
+What link::Classes/TunnelPanel:: puts at the top of Tunnel's window, in two parts.
 
-It draws from the object's settings and the replies its meters bring, so it is only live while the window is running; link::Classes/FxParamView:: has the rest.
+strong::echoes:: - one hit and everything it leaves: a bar per echo at the time it arrives, as loud as the settings make it, in dB against the hit (the middle line is silence). The left line is above, the right below, so a ping pong reads as bars changing sides. Along the bottom, ms or s when free; beats when in sync, the sixteenths ticked along the middle. The bars are link::Classes/Tunnel#-echoes::, the graph's own sums; the dashed line is how fast the loop lets them die, and the caption gives the times, the feedback and how many echoes are heard (or that past 100 % they never die away).
+
+strong::loop filter:: - the band, from the biquads' own numbers, and what is left of the 2nd, 4th and 8th echo after going through it again and again, with the output's spectrum behind.
+
+While the window runs, the meters' replies make it live: the bars move with the lfo (where code::modTime:: has them, in orange), sink by what the duck takes, the hit at the left dims while the gate is shut, and behind the bars, in blue, the echoes' measured level runs along from the last hit. At rest it still draws the settings.
+
+table::
+## strong::where:: || strong::gesture:: || strong::what it does::
+## echoes || drag one along || its line's time: the echo follows the pointer (in sync, from division to division; with link, both lines)
+## echoes || drag away from the middle || more feedback; towards it, less
+## echoes || the wheel || ping pong
+## echoes || double click || feedback back to its default
+## loop filter || drag the band || along: its middle; up: wider, down: narrower
+## loop filter || drag an edge || that edge alone
+## loop filter || the wheel || its width
+## loop filter || double click || back to the defaults
+::
+
+Shift makes any drag fine. In a TunnelPanel, hovering a part lights the knobs it plays, a hovered knob lights its part here, and a drag says what it does in the hint bar.
 
 CLASSMETHODS::
 
@@ -16,7 +34,35 @@ The link::Classes/Tunnel::.
 ARGUMENT:: parent
 A view to go in.
 
+METHOD:: hotKeys
+the parameters whose knobs and parts light each other.
+
+METHOD:: timeText
+a time as the axis says it: "250 ms", "1.5 s".
+ARGUMENT:: t
+seconds.
+
 INSTANCEMETHODS::
 
+METHOD:: panel
+the link::Classes/TunnelPanel:: it is in, which sets it; nil on its own.
+
+METHOD:: hot
+the parameter whose part is lit, set by a hovered knob; nil for none.
+
 METHOD:: hint
-What the hint bar says over it.
+What the hint bar says over a point: the echo or the part of the band under it, and what dragging does.
+ARGUMENT:: x
+ARGUMENT:: y
+nil for what it says about the whole display.
+
+METHOD:: levelsArrived
+Called by the panel on every meter reply: keeps the trace of the echoes' level since the last hit, and the gate and duck knobs' rings.
+
+EXAMPLES::
+
+code::
+t = Tunnel.new;
+t.gui;      // the display is the top of the window
+t.preset = 'ping pong';
+::

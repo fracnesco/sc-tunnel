@@ -29,47 +29,51 @@ Hiss in the loop never goes silent, so in a SuperDirt insert an orbit with code:
 subsection:: The object and the UGen
 It is an link::Classes/FxParamUnit::, so everything that class documents works here: code::Tunnel.ar(in, name)::, code::Tunnel(node, name)::, code::Tunnel.onBus(bus, numChannels)::, presets, the clipboard, code::gui::. Its window's display is a link::Classes/TunnelView::.
 
+subsection:: The window
+code::gui:: opens a device (link::Classes/TunnelPanel::) on four pages - echo, modulation, character, space - under one display, a link::Classes/TunnelView::: the echoes of a hit along a time axis, the left line above and the right below, and the loop filter they go through. Drag an echo along for its line's time and away from the middle for feedback; drag the band or one of its edges. With code::sync:: on, each line's knob is a stepped knob over the divisions; code::tap:: is a button there. What does nothing as things are set is dimmed (code::*isActive::). The echoes, the name and the knobs that place them are the delay family's teal (code::*identityColour::).
+
 subsection:: Parameters
 Each is a property of the object: read it, set it. The numbers are in the order of the node's control, which is what saved node maps carry. Internal ones without a knob, if any, are described above.
 
 table::
 ## strong::parameter:: || strong::range:: || strong::default:: || strong::what it does::
-## code::sync:: || on / off || false || in time with bpm, by division - unticked, in milliseconds
-## code::timeL:: || 0.001 .. 4 s || 0.375 || the left line's time
-## code::timeR:: || 0.001 .. 4 s || 0.5 || the right line's time
-## code::divL:: || 1/32 1/16t 1/16 1/16d 1/8t 1/8 1/8d 1/4t 1/4 1/4d 1/2 1/2d 1/1 || 1/8d || the left line's division, when in sync
-## code::divR:: || 1/32 1/16t 1/16 1/16d 1/8t 1/8 1/8d 1/4t 1/4 1/4d 1/2 1/2d 1/1 || 1/4 || the right line's division, when in sync
-## code::link:: || on / off || false || the right line follows the left
-## code::offset:: || -0.33 .. 0.33 || 0 || the right line a little early or late: a swing between the sides
-## code::bpm:: || 20 .. 300 bpm || 120 || the tempo the divisions are counted in
-## code::input:: || -36 .. 12 dB || 0 || the level into the lines
-## code::feedback:: || 0 .. 1.2 || 0.5 || how much goes round again - saturated, so past 1 it swells and holds
-## code::cross:: || 0 .. 1 || 0 || how much of each side's feedback goes to the other: ping pong
-## code::invert:: || on / off || false || turn the feedback's polarity over: hollow, at short times
-## code::filterOn:: || on / off || true || the band filter in the loop and on what comes out
-## code::filterFreq:: || 40 .. 16000 Hz || 1600 || the middle of the band
-## code::filterWidth:: || 0.2 .. 9 oct || 5 || how wide the band is, in octaves
+## code::sync:: || on off || false || in time with the bpm, by division - off, in milliseconds
+## code::timeL:: || 0.001 .. 4 s || 0.375 || the left line's time - or drag its echoes along in the display
+## code::timeR:: || 0.001 .. 4 s || 0.5 || the right line's time - or drag its echoes along in the display
+## code::divL:: || 1/32 1/16t 1/16 1/16d 1/8t 1/8 1/8d 1/4t 1/4 1/4d 1/2 1/2d 1/1 || 1/8d || the left line's time in sync: a division of the bpm, t for triplet, d for dotted - or drag its echoes along
+## code::divR:: || 1/32 1/16t 1/16 1/16d 1/8t 1/8 1/8d 1/4t 1/4 1/4d 1/2 1/2d 1/1 || 1/4 || the right line's time in sync: a division of the bpm, t for triplet, d for dotted - or drag its echoes along
+## code::link:: || on off || false || the right line follows the left - swing still moves it
+## code::offset:: || -0.33 .. 0.33 || 0 || the right line a little early or late against the left
+## code::bpm:: || 20 .. 300 bpm || 120 || the tempo the divisions are counted in - type it, or tap it
+## code::input:: || -36 .. 12 dB || 0 || the level into the lines: louder echoes, and past 0 dB they saturate
+## code::feedback:: || 0 .. 1.2 || 0.5 || how much goes round again - saturated, so past 100 it swells and holds; or drag the echoes away from the middle
+## code::cross:: || 0 .. 1 || 0 || how much of each side's feedback goes to the other: at 100 the echoes swap sides every time - or the wheel on the echoes
+## code::invert:: || on off || false || turn the feedback's polarity over: hollow, at short times
+## code::filterOn:: || on off || true || the band filter in the loop: every echo goes through it once more, so they darken as they go
+## code::filterFreq:: || 40 .. 16000 Hz || 1600 || the middle of the band - or drag the band along in the display
+## code::filterWidth:: || 0.2 .. 9 oct || 5 || how wide the band is, in octaves - or the wheel on the band
 ## code::lfoShape:: || sine triangle sawUp sawDown square sampleHold noise || sine || the lfo's shape
-## code::lfoRate:: || 0.01 .. 20 Hz || 0.5 || the lfo's speed
-## code::lfoPhase:: || 0 .. 1 || 0.25 || how far apart the sides' lfos are: 0.5 is opposite
-## code::modTime:: || 0 .. 1 || 0 || how much the lfo moves the delay time
-## code::modFilter:: || 0 .. 1 || 0 || how much the lfo moves the filter
+## code::lfoRate:: || 0.01 .. 20 Hz || 0.5 || the lfo's speed, when it runs free
+## code::lfoPhase:: || 0 .. 1 || 0.25 || how far apart the two sides' lfos are: 50 is opposite
+## code::modTime:: || 0 .. 1 || 0 || how much the lfo moves the delay time, up to half of it each way: a chorus at short times, a warble at long ones
+## code::modFilter:: || 0 .. 1 || 0 || how much the lfo moves the band, up to two octaves each way
 ## code::envMix:: || 0 .. 1 || 0 || lfo or envelope: at 100 the input's level does the moving
-## code::gateThr:: || -96 .. 0 dB || -96 || what falls under this does not go in
+## code::gateThr:: || -96 .. 0 dB || -96 || what falls under this does not go into the lines
 ## code::gateRel:: || 0.005 .. 2 s || 0.2 || how quickly the gate closes
-## code::duckThr:: || -60 .. 0 dB || 0 || the echoes get out of the way while the input is over this
+## code::duckThr:: || -60 .. 0 dB || 0 || the echoes get out of the way while the input is over this - at 0 dB they never do
 ## code::duckRel:: || 0.01 .. 2 s || 0.25 || how quickly they come back
-## code::noise:: || 0 .. 1 || 0 || hiss in the loop
+## code::noise:: || 0 .. 1 || 0 || tape hiss in the loop - it never goes quiet
 ## code::noiseMorph:: || 0 .. 1 || 0.5 || the hiss from dark to bright
-## code::wobble:: || 0 .. 1 || 0 || a slow unsteady tape speed
-## code::wobbleMorph:: || 0 .. 1 || 0.3 || the wobble from slow drift to fast flutter
-## code::repitch:: || on / off || false || a change of time bends the echoes, like a tape; unticked they crossfade
+## code::wobble:: || 0 .. 1 || 0 || an unsteady tape speed
+## code::wobbleMorph:: || 0 .. 1 || 0.3 || the wobble from a slow drift to a fast flutter
+## code::repitch:: || on off || false || a change of time bends the echoes, like a tape; off, they crossfade
 ## code::reverb:: || 0 .. 1 || 0 || how much of the small reverb
 ## code::reverbDecay:: || 0 .. 1 || 0.6 || how big it is
-## code::reverbPos:: || pre post loop || post || the reverb before the lines, after them, or inside the feedback
-## code::width:: || 0 .. 2 || 1 || how far apart the echoes sit: 0 is mono
+## code::reverbPos:: || pre post loop || post || the reverb before the lines, after them, or inside the feedback, where it builds
+## code::width:: || 0 .. 2 || 1 || how far apart the echoes sit: 0 is mono, past 100 wider than they came in
 ## code::mix:: || 0 .. 1 || 0.35 || how much of the effect goes out, against the dry signal
 ## code::output:: || -36 .. 24 dB || 0 || the level of the whole thing, in dB
+## code::lfoSync:: || free four two one half quarter eighth sixteenth third sixth twelfth || free || the lfo free, at its rate - or one period every so many cycles of Tidal's clock
 ::
 
 CLASSMETHODS::
@@ -85,6 +89,45 @@ INSTANCEMETHODS::
 METHOD:: lineTime
 a line's time in seconds as the settings have it, before any lfo: side 0 is the left, 1 the right.
 ARGUMENT:: side
+
+METHOD:: tap
+Tap the beat: from the second tap on, the time between taps (the mean of the last four) is a beat. It sets code::bpm::; free, it sets the left time to the beat too, and the right keeps its ratio to the left. A pause of two seconds starts over.
+ARGUMENT:: at
+the time of the tap, in seconds; code::Main.elapsedTime:: when nil.
+RETURNS:: the beat in seconds, or nil after the first tap.
+
+METHOD:: divisionNear
+the division nearest a time at the bpm, by ratio.
+ARGUMENT:: seconds
+
+METHOD:: echoes
+Every echo of one hit into both lines, as the display draws them: code::[side, time, gain, passes]::, side 0 the left and 1 the right, the gain against the hit (negative when it comes back upside down). A pass through a line is its time, the band once and the feedback; code::cross:: sends that share to the other side; the loop's saturation is a clip at 1. No lfo, gate, duck or noise: the settings' arithmetic only.
+ARGUMENT:: kL
+a factor on the left time (where the lfo has it).
+ARGUMENT:: kR
+a factor on the right time.
+ARGUMENT:: floor
+the quietest kept, in dB.
+ARGUMENT:: maxPasses
+how many trips round the loop at most.
+ARGUMENT:: mono
+one line, which cross cannot reach.
+ARGUMENT:: until
+the latest time kept, in seconds.
+code::
+t = Tunnel.new; t.filterOn = false;
+t.echoes.keep(4).postln;    // [ [ 0, 0.375, 1.0, 1 ], [ 1, 0.5, 1.0, 1 ], [ 1, 1.0, 0.5, 2 ], [ 0, 0.75, 0.5, 2 ] ]
+::
+
+METHOD:: repeats
+how many echoes are heard before they fall under a floor in dB (default -48): code::inf:: when the loop holds.
+ARGUMENT:: floor
+
+METHOD:: loopGain
+what one trip round the loop keeps: the feedback and the band once.
+
+METHOD:: bandGain
+what one pass through the band keeps, at its middle.
 
 METHOD:: hiPass
 the bottom of the band, in Hz.
