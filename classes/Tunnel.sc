@@ -128,6 +128,14 @@ Tunnel : FxParamUnit {
 		]
 	}
 
+	// what a Tidal pattern may move through SuperDirtGUI, event by event
+	*tidalParams {
+		^#[\timeL, \timeR, \divL, \divR, \input, \feedback, \cross, \filterFreq, \filterWidth,
+			\lfoRate, \lfoSync, \modTime, \modFilter, \noise, \wobble, \reverb, \width, \mix]
+	}
+
+	*usesTidalClock { ^true }
+
 	*presetList {
 		^[
 			\default, (),
