@@ -2,6 +2,8 @@
 
 **A stereo delay with a character section - time or tempo, a band filter in the loop, modulation, gate, ducking, tape noise and wobble, and a reverb before, after or inside it - in the spirit of Ableton's Echo, running anywhere a UGen does, with a window.** A SuperCollider extension.
 
+![Tunnel's window](images/tunnel.png)
+
 ```supercollider
 s.boot;
 Ndef(\keys, { Tunnel.ar(Blip.ar([220, 221], 8) * Decay2.kr(Impulse.kr(1), 0.01, 0.2) * 0.3, \tunnel) }).play;
@@ -158,6 +160,7 @@ Every parameter is a property: `t.sync`, `t.sync = ...`. These also work by name
 | [examples/tunnel-demo.scd](examples/tunnel-demo.scd) | a walkthrough, one block at a time |
 | [install.scd](install.scd) | the symlink, a check, an uninstall |
 | [sc-tunnel.quark](sc-tunnel.quark) | the quark manifest |
+| [images/](images/) | the screenshots in this README |
 
 ## License
 
