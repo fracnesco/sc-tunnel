@@ -17,7 +17,7 @@ t.feedback = 0.7; t.cross = 1;      // ping pong
 
 Every effect of this family lives in the same three places. Write `Tunnel.ar` into a graph of your own and drive it from the object, as above; give it a node of its own on a bus, `Tunnel.onBus(0, 2).enabled_(true)`; or put it in a chain, `FxChain.master.add(Tunnel())`. If SuperDirtGUI is installed, it is an insert on an orbit too: `~sdg.addInsert(0, \tunnel)`.
 
-It is built on [FxKit](../sc%20fx%20kit), which is built on [ParaEQ](../sc%20EQ), and the class library will not compile without them; the installer links both when the folders sit side by side. It uses SuperCollider's own UGens, not sc3-plugins.
+It is built on [FxKit](https://github.com/fracnesco/sc-fx-kit), and the class library will not compile without it; the installer links it when the folders sit side by side. It uses SuperCollider's own UGens, not sc3-plugins.
 
 Written for SuperCollider 3.13 on macOS. Nothing in it is platform specific apart from the symlink in `install.scd`, which Linux shares and Windows does not.
 
@@ -30,11 +30,11 @@ Quarks.install("https://github.com/fracnesco/sc-tunnel.git");
 thisProcess.recompile;
 ```
 
-The manifest names `sc-fx-kit` as a dependency, which names `sc-eq`, so `Quarks` fetches those first. The quark goes by the name of the repository, `sc-tunnel`; the class inside it is `Tunnel`.
+The manifest names `sc-fx-kit` as a dependency, so `Quarks` fetches that first. The quark goes by the name of the repository, `sc-tunnel`; the class inside it is `Tunnel`.
 
 ### From a clone
 
-Clone `sc-eq` into a folder called `sc EQ`, `sc-fx-kit` into `sc fx kit` and this into `sc tunnel`, side by side. Open `install.scd` and evaluate its first block, then recompile the class library. It links what is missing and tells you what it did.
+Clone `sc-fx-kit` into a folder called `sc fx kit` and this into `sc tunnel`, side by side. Open `install.scd` and evaluate its first block, then recompile the class library. It links what is missing and tells you what it did.
 
 On Windows there is no `ln -s`, so use the quark, or copy the three folders into the extensions folder by hand: `Platform.userExtensionDir.openOS` opens it.
 
