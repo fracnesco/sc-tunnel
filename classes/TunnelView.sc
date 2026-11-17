@@ -608,9 +608,12 @@ TunnelView : FxParamView {
 	// doubling); with nothing new for longer than the plot, it starts again from
 	// here while anything sounds - so a steady sound runs along too
 	levelsArrived {
-		var now = Main.elapsedTime, ex = unit.extras ? [], in = unit.inLevel ? 0;
-		var wl = ex[4] ? 0, wr = ex[5] ? wl, sp;
+		var now = Main.elapsedTime, ex, in, wl, wr, sp;
 		if (unit.isNil) { ^this };
+		ex = unit.extras ? [];
+		in = unit.inLevel ? 0;
+		wl = ex[4] ? 0;
+		wr = ex[5] ? wl;
 		sp = this.prSpan;
 		case
 		{ (in > 0.003) and: { in > (lastIn * 1.8) } and: { hitAt.isNil or: { (now - hitAt) > 0.1 } } } {
