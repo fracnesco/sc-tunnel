@@ -194,6 +194,9 @@ Tunnel : FxParamUnit {
 			and: { unit.get(\envMix) < 1 }
 	}
 
+	// a card in a strip (FxDeviceCard): each side's time, or its division when synced
+	*cardKeys { ^[[\timeL, \divL], [\timeR, \divR], \feedback, \mix] }
+
 	*isActive { |key, unit|
 		^switch (key,
 			\timeL, { unit.get(\sync).not },
